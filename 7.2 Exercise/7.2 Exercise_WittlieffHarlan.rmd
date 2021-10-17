@@ -1,0 +1,138 @@
+---
+title: "7.2 Exercise"
+author: "Harlan Wittlieff"
+date: "10/17/2021"
+output: pdf_document
+---
+
+# Assignment 04
+
+```{r include=FALSE}
+## Load the `data/r4ds/heights.csv` to
+heights_df <- read.csv("data/r4ds/heights.csv")
+```
+
+## 1. Using `cor()` compute correclation coefficients for:
+### a. height vs. earn
+
+```{r include=TRUE}
+cor(heights_df[,c("height", "earn")])
+```
+### b. age vs. earn
+
+```{r include=TRUE}
+cor(heights_df[,c("age", "earn")])
+```
+### b. ed vs. earn
+
+```{r include=TRUE}
+cor(heights_df[,c("ed", "earn")])
+```
+### c. Spurious correlation
+The following is data on US spending on science, space, and technology in 
+millions of today's dollars and Suicides by hanging strangulation and suffocation 
+for the years 1999 to 2009 Compute the correlation between these variables
+
+```{r include=TRUE}
+tech_spending <- c(18079, 18594, 19753, 20734, 20831, 23029, 23597, 23584, 25525, 27731, 29449)
+suicides <- c(5427, 5688, 6198, 6462, 6635, 7336, 7248, 7491, 8161, 8578, 9000)
+cor(tech_spending, suicides)
+```
+
+# Student survey
+## a. As a data science intern with newly learned knowledge in skills in statistical 
+correlation and R programming, you will analyze the results of a survey recently
+given to college students. You learn that the research question being investigated 
+is: “Is there a significant relationship between the amount of time spent reading 
+and the time spent watching television?” You are also interested if there are other 
+significant relationships that can be discovered? The survey data is located in 
+this StudentSurvey.csv file.
+
+```{r include=FALSE}
+students_df <- read.csv("data/student-survey.csv")
+```
+
+### i. Use R to calculate the covariance of the Survey variables and provide an explanation of why you would use this calculation and what the results indicate.
+
+```{r include=TRUE}
+cov(students_df[,c("TimeReading", "TimeTV", "Happiness", "Gender")])
+```
+Calculating the covariance gives insight on to whether or not two variables are related to each other. A positive covariance means that as one variable deviates from the mean, the other deviates in the same direction. A negative covariance means that as one variable deviates from the mean, the other deviates in the opposite direction.
+
+### ii. Examine the Survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the covariance calculation. Would this be a problem? Explain and provide a better alternative if needed.
+* TimeReading
+    + This field appears to contain ranked values with ties.
+* TimeTV
+    + This field contains a numeral value from 50-95 in increments of 5. No units
+    are noted.
+* Happiness
+    + This field provides a numerical value for happiness. My assumption would be
+    happiness is provided on a scale of 0-100. 
+* Gender
+    + This field contains a binary value for gender. Which gender relates to which
+    value is unspecified.
+Since these variables contain different scales of measurement, comparing the covariance between different variables provides little value. A better method is looking at the correlations between the variables. 
+
+### iii. Choose the type of correlation test to perform, explain why you chose this test, and make a prediction if the test yields a positive or negative correlation?
+
+I'm going to use Kendall's tau to calculate correlation between TimeReading and TimeTv. I chose this test since it's the suggested method when dealing with small data sets containing tied ranked data. My prediction is that TimeReading and TimeTV will be negatively correlated as time spent doing one activity is time not available for the other. 
+
+### iv. Perform a correlation analysis of:
+#### 1. All Variables
+
+```{r include=TRUE}
+cor(students_df, method = "kendall")
+```
+#### 2. A single correlation between a pair of the variables.
+
+```{r include=TRUE}
+cor(students_df$TimeReading, students_df$TimeTV, method = "kendall")
+```
+#### 3. Repeat your correlation test in step 2 but set the confidence interval at 99%
+
+
+```{r warning=FALSE}
+bootTau <-function(students_df,i)cor(students_df$TimeReading[i],students_df$TimeTV[i], use = "complete.obs", method = "kendall")
+library(boot)
+boot_kendall <- boot(students_df, bootTau, 2000)
+boot.ci(boot_kendall, conf = 0.99)
+```
+#### 4. Describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+* TimeReading & TimeTV
+    + -.80
+    + These two variables are strongly negatively correlated. However, as TimeReading is a ranked value this means that as the rank decreases for TimeReading, TimeTV increases.
+* TimeReading & Happiness
+    + These two variables are slightly negatively correlated. As TimeReading rank decreases, happiness increases.
+* TimeReading & Gender
+    + -.08 correlation. From the results TimeReading & gender have little correlation.
+* TimeTv & Happiness
+    + There is some correlation seen between these two variables. As more time is spent watching tv, happiness increases.
+* TimeTv & Gender
+    + Little correlation is seen.
+* Happiness & Gender
+    + Little correlation is seen.
+    
+### v. Calculate the correlation coefficient and the coefficient of determination, describe what you conclude about the results.
+
+Correlation coefficient:
+```{r include=TRUE}
+cor(students_df)
+```
+Coefficient of determination:
+```{r include=TRUE}
+cor(students_df)^2
+```
+* 78% of TimeReading's variability is shared with TimeTV, 19% with Happiness and 1% with Gender
+* 41% of TimeTv's variability is shared with Happiness, and 0% with Gender
+* 2% of Happiness's variability is shared with Gender
+
+### vi. Based on your analysis can you say that watching more TV caused students to read less? Explain.
+Assuming ranked values for TimeReading where 1 is the most time spent reading out of all samples, from our data more time spent reading correlates to more time spent watching TV. The two had a correlation of -.8. Which equates to a strong negative correlation. As TimeReading's rank decreases, TimeTV increases.
+
+### vii. Pick three variables and perform a partial correlation, documenting which variable you are “controlling”. Explain how this changes your interpretation and explanation of the results.
+
+```{r include=TRUE}
+library(ggm)
+pcor(c("TimeReading","TimeTV","Gender"), var(students_df))
+```
+Comparing the correlation between TimeReading & TimeTV while controlling for Gender resulted in a correlation of .87. This is a minor change from our correlation that was not controlled for Gender meaning that gender has very little impact on TimeReading & TimeTV.
