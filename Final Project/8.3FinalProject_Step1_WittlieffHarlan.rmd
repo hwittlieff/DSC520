@@ -1,0 +1,47 @@
+---
+title: "8.3 Final Project Step 1"
+author: "Harlan Wittlieff"
+date: "10/31/2021"
+output: pdf_document
+bibliography: bibliography.bib
+---
+
+# Introduction
+What makes a powerful Pokémon? Pokémon are built from a wide variety of components that could potentially impact overall strength and power including type, generation, gender, hit points, attack, and defense. Millions of individuals around the world play various Pokémon games and battle Pokémon. This is a data science problem because there are a variety of elements potentially impacting overall power that could be segmented and used to predict the likelihood of a Pokémon winning in battle.
+
+# Research Questions
+* Are Pokémon that are more heavily male or female typically more powerful? 
+* Which specific types of Pokémon have the most power?
+* Is defense or attack more important in terms of overall performance?
+* How would the optimal Pokémon be designed?
+* Does size matter relative to Pokémon power?
+* Does generation impact Pokémon power?
+* Are more powerful Pokémon harder to catch?
+
+# Approach
+A variety of characteristics and classifications of Pokémon will be analyzed to determine their impacts on multiple battle statistics such as hit points, attack, and defense.
+
+# How will your approach address (fully or partially) the problem?
+Once the variables that have the most significant impact to power are identified, they can then be used to build a model that would predict the most powerful Pokémon.
+
+# Potential Data Sets
+- The Complete Pokemon Dataset [@CompletePokemonDataset]
+- Pokemon with stats [@PokemonWithStats]
+- Comprehensive DPS/TDO Spreadsheet [@GamePress]
+
+# Required Packages
+- tidyverse
+- QuantPsyc
+- boot
+
+# Plots and Table Needs
+- Histogram
+- Boxplot
+- QQ PLot
+- Scatterplot
+
+# Questions for future steps
+- Additional research into the various stats and their specific impacts in the Pokémon is needed.
+- Learning Logistic Regression in week 10 may impact this project.
+
+# Bibliography
