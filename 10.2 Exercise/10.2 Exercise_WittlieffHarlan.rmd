@@ -1,0 +1,66 @@
+---
+title: "10.2 Exercise"
+author: "Harlan Wittlieff"
+date: "11/7/2021"
+output: pdf_document
+---
+
+# 1. Fit a Logistic Regression Model to Thoracic Surgery Binary Dataset
+
+```{r include = FALSE}
+# Load the Thoracic Surgery Data set
+library('foreign')
+thoracic_df <- read.arff('data/ThoraricSurgery.arff')
+
+```
+
+## i. Fit a binary logistic regression model to the data set that predicts whether or not the patient survived for one year (the Risk1Y variable) after the surgery. Use the glm() function to perform the logistic regression. See Generalized Linear Models for an example. Include a summary using the summary() function in your results.
+
+```{r include = TRUE}
+# Update PRE14 to numerical values based on size
+thoracic_df$PRE14 <- gsub("[a-zA-z ]", "", thoracic_df$PRE14)
+thoracic_df$PRE14 <- as.numeric(thoracic_df$PRE14)
+
+mymodel <- glm(Risk1Yr ~ PRE9 + PRE11 + PRE14, data = thoracic_df, family = 'binomial')
+summary(mymodel)
+
+```
+
+## ii. According to the summary, which variables had the greatest effect on the survival rate?
+From the variables I selected, PRE9 has the greatest effect size of .94, followed by PRE11, and PRE14
+
+## iii. To compute the accuracy of your model, use the dataset to predict the outcome variable. The percent of correct predictions is the accuracy of your model. What is the accuracy of your model?
+
+```{r include = TRUE}
+res <- predict(mymodel, thoracic_df, type="response")
+confmatrix <- table(Actual_Value=thoracic_df$Risk1Yr, Predicted_Value = res >0.5)
+confmatrix
+accuracy <- (confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+```
+The accuracy of my model is 84.7%. 
+
+# 1. Fit a Logistic Regression Model to Binary Classifier Dataset
+```{r include = FALSE}
+# Load the Data set
+binary_df <- read.csv('data/binary-classifier-data.csv')
+
+```
+
+## a. Fit a logistic regression model to the binary-classifier-data.csv dataset
+```{r include = TRUE}
+
+mymodel_binary <- glm(label ~ x + y, data = binary_df, family = 'binomial')
+summary(mymodel)
+
+```
+
+## b. What is the accuracy of the logistic regression classifier?
+```{r include = TRUE}
+res_binary <- predict(mymodel_binary, binary_df, type="response")
+confmatrix_binary <- table(Actual_Value=binary_df$label, Predicted_Value = res_binary >0.5)
+confmatrix_binary
+accuracy_binary <- (confmatrix_binary[[1,1]] + confmatrix_binary[[2,2]]) / sum(confmatrix_binary)
+accuracy_binary
+```
+
+The accuracy is 58.3%.
