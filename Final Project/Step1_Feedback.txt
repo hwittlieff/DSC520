@@ -1,0 +1,10 @@
+8.3 Final Project Step 1
+Harlan, your problem statement and research questions make sense, but you should try to be as specific as possible. E.g., what will you be modeling/predicting with your model. 
+Will you be predicting a score that measures the overall effectiveness of a Pokemon? And what type of model will you use? 
+It is important to narrow your focus and be as specific as possible, so you have clear goals moving forward.
+
+Problem Statement/Clarity: 85/90
+
+Writing: 45/45
+
+Additonal Content: 42/45 
